@@ -82,7 +82,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-'''
 CORS_ALLOWED_ORIGINS = ['http://localhost:8080']
 CORS_ALLOW_CREDENTIALS = True
 
@@ -91,7 +90,6 @@ SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
-'''
 ROOT_URLCONF = 'kokowa.urls'
 
 TEMPLATES = [
