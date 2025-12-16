@@ -82,7 +82,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-CORS_ALLOWED_ORIGINS = ['http://localhost:8080']
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8080',
+    'https://reina630.github.io',
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # Sécurité HTTP
