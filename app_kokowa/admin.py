@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Donateur, Lutteur, Soutient, Contribution, PaymentInfo, DeviceInfo, WebhookEvent, Log, Utilisateur, Affrontement
+from .models import Donateur, Lutteur, Soutient, Contribution, PaymentInfo, DeviceInfo, WebhookEvent, Log, Utilisateur, Affrontement, Pronostic
 
 
 admin.site.register(Donateur)
@@ -12,3 +12,4 @@ admin.site.register(WebhookEvent)
 admin.site.register(Log)
 admin.site.register(Utilisateur)
 admin.site.register(Affrontement)
+admin.site.register(Pronostic)

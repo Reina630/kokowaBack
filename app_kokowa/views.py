@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import status
 
 
 from django.utils import timezone
@@ -383,7 +384,17 @@ def affrontement_edit_view(request, id):
 
     serializer = sz.AffrontementS(instance=mon_affrontement, data=request.data, partial=True)
     if serializer.is_valid():
-        serializer.save()
+        updated_affrontement = serializer.save()
+        # Met à jour les pronostics si le vainqueur est défini
+        if updated_affrontement.vainqueur:
+            pronostics = models.Pronostic.objects.filter(affrontement=updated_affrontement)
+            for p in pronostics:
+                if ((p.choix == 'l1' and updated_affrontement.vainqueur == updated_affrontement.l1) or
+                    (p.choix == 'l2' and updated_affrontement.vainqueur == updated_affrontement.l2)):
+                    p.resultat = 'gagné'
+                else:
+                    p.resultat = 'perdu'
+                p.save()
         return Response(serializer.data)
 
     return Response(serializer.errors, status=400)
@@ -431,17 +442,17 @@ def affrontement_vainqueur_view(request, id):
     except models.Affrontement.DoesNotExist:
         return Response({"error": "Affrontement non trouvée"}, status=404)
 
-    vainqueur = request.data.get("vainqueur")
+    choix = request.data.get("choix")
 
-    if vainqueur == "l1":
+    if choix == "l1":
         affrontement.vainqueur = affrontement.l1
         affrontement.save()
-        return Response({"message": "Vainqueur enregistré avec succés", "Vainqueur": affrontement.vainqueur.nom})
+        return Response({"message": "Vainqueur enregistré", "vainqueur": "l1"})
 
-    elif vainqueur == "l2":
+    elif choix == "l2":
         affrontement.vainqueur = affrontement.l2
         affrontement.save()
-        Response({"message": "Vainqueur enregistré avec succés", "Vainqueur": affrontement.vainqueur.nom})
+        return Response({"message": "Vainqueur enregistré", "vainqueur": "l2"})
 
     else:
         return Response({"error": "Choix invalide. Envoyer 'l1' ou 'l2'."}, status=400)
@@ -552,5 +563,22 @@ def profile_view(request):
 # User Fin
 
 
+# Pronostics
+
+@api_view(['POST'])
+def pronostic_create_view(request):
+    serializer = sz.PronosticS(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def pronostic_liste_view(request):
+    pronostics = models.Pronostic.objects.all().order_by('-date_vote')
+    serializer = sz.PronosticS(pronostics, many=True)
+    return Response(serializer.data)
+
+# Pronostics Fin
 
 # v1 end

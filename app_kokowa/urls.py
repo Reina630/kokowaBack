@@ -40,4 +40,8 @@ urlpatterns = [
     path('v1/auth/logout', views.logout_view, name='logout'),
     path('v1/auth/profile', views.profile_view, name='profile'),
 
+    # Pronostics
+    path('v1/pronostic_add', views.pronostic_create_view, name="pronostic_add"),
+    path('v1/pronostic_liste', views.pronostic_liste_view, name="pronostic_liste"),
+
 ]

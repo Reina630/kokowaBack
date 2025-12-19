@@ -31,10 +31,19 @@ class ContributionS(serializers.ModelSerializer):
         read_only_fields = ['id', 'cree_le', 'processed_at']
 
 class AffrontementS(serializers.ModelSerializer):
+    nb_votes_l1 = serializers.SerializerMethodField()
+    nb_votes_l2 = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Affrontement
-        fields = ['id', 'l1', 'l2', 'etape', 'date', 'vote1', 'status', 'vote2', 'cree_le']
-        read_only_fields = ['id', 'vote1', 'vote2', 'cree_le']
+        fields = ['id', 'l1', 'l2', 'etape', 'date', 'vote1', 'status', 'vote2', 'vainqueur', 'cree_le', 'nb_votes_l1', 'nb_votes_l2']
+        read_only_fields = ['id', 'vote1', 'vote2', 'cree_le', 'nb_votes_l1', 'nb_votes_l2']
+
+    def get_nb_votes_l1(self, obj):
+        return obj.nb_votes_l1
+
+    def get_nb_votes_l2(self, obj):
+        return obj.nb_votes_l2
 
 
 class RegisterS(serializers.ModelSerializer):
@@ -92,3 +101,10 @@ class UserProfileS(serializers.ModelSerializer):
     class Meta:
         model = models.Utilisateur
         fields = ['id', 'telephone', 'favoris', 'date_creation']
+
+# serializer  du pronostic
+class PronosticS(serializers.ModelSerializer):
+    class Meta:
+        model = models.Pronostic
+        fields = ['id', 'numero_telephone', 'affrontement', 'choix', 'resultat', 'date_vote']
+        read_only_fields = ['id', 'resultat', 'date_vote']

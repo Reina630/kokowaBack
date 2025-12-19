@@ -203,6 +203,27 @@ class Affrontement(models.Model):
     status = models.CharField(max_length=9, choices=STATUTS, default="a_venir")
     vainqueur = models.ForeignKey(Lutteur, on_delete=models.SET_NULL, null=True, blank=True, related_name="vainqueur_affrontement")
     cree_le = models.DateTimeField(auto_now_add=True)
+    
+# compte le nombre de votes pour chaque lutteur
+    @property
+    def nb_votes_l1(self):
+        return self.pronostic_set.filter(choix='l1').count()
+
+    @property
+    def nb_votes_l2(self):
+        return self.pronostic_set.filter(choix='l2').count()
+
+# Classe pour les pronostics des affrontements
+class Pronostic(models.Model):
+    numero_telephone = models.CharField(max_length=20)
+    affrontement = models.ForeignKey(Affrontement, on_delete=models.CASCADE)
+    choix = models.CharField(max_length=3, choices=[('l1', 'Lutteur 1'), ('l2', 'Lutteur 2')])
+    resultat = models.CharField(max_length=10, choices=[('gagné', 'Gagné'), ('perdu', 'Perdu'), ('en_attente', 'En attente')], default='en_attente')
+    date_vote = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.numero_telephone} - {self.affrontement} - {self.choix} - {self.resultat}"
+    
 
     def clean(self):
         # Empêche de choisir un vainqueur qui n'est ni l1 ni l2
